@@ -115,18 +115,20 @@ function App() {
         />
 
         <div className="sort-control">
-          <label htmlFor="technology-sort">Ordenar por:</label>
+          <label htmlFor="technology-sort">Ordenar tecnologías</label>
 
-          <select
-            id="technology-sort"
-            value={sortOrder}
-            onChange={(event) => setSortOrder(event.target.value)}
-          >
-            <option value="default">Orden original</option>
-            <option value="az">Nombre: A → Z</option>
-            <option value="za">Nombre: Z → A</option>
-            <option value="category">Categoría</option>
-          </select>
+          <div className="sort-select-wrapper">
+            <select
+              id="technology-sort"
+              value={sortOrder}
+              onChange={(event) => setSortOrder(event.target.value)}
+            >
+              <option value="default">Orden original</option>
+              <option value="az">Nombre: A → Z</option>
+              <option value="za">Nombre: Z → A</option>
+              <option value="category">Categoría</option>
+            </select>
+          </div>
         </div>
 
         {editingTechnology && (

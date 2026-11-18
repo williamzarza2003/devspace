@@ -1030,3 +1030,129 @@ footer {
     width: 100%;
   }
 }
+
+/* ========================================
+   MEJORA GENERAL DEL ESPACIO DEL DASHBOARD
+======================================== */
+
+.dashboard {
+  width: min(94%, 1600px);
+  margin-inline: auto;
+}
+
+/* Mejor distribución de las tecnologías */
+.cards {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 22px;
+}
+
+/* Más espacio entre las secciones */
+.dashboard-stats {
+  margin-bottom: 50px;
+}
+
+/* Mejor adaptación a pantallas medianas */
+@media (max-width: 900px) {
+  .dashboard {
+    width: min(94%, 1600px);
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Adaptación a celulares */
+@media (max-width: 650px) {
+  .dashboard {
+    width: calc(100% - 30px);
+    padding-top: 22px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========================================
+   SELECTOR DE ORDENAMIENTO
+======================================== */
+
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 18px 0 24px;
+}
+
+.sort-control label {
+  color: #aeb7d0;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sort-select-wrapper {
+  position: relative;
+  width: 240px;
+  max-width: 100%;
+}
+
+.sort-select-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 17px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #aaa1ff;
+  border-bottom: 2px solid #aaa1ff;
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+
+.sort-select-wrapper select {
+  width: 100%;
+  appearance: none;
+  padding: 12px 42px 12px 15px;
+  color: #e8eaf2;
+  background: #151b30;
+  border: 1px solid #343e5c;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.sort-select-wrapper select:hover {
+  background: #1a223a;
+  border-color: #7568e8;
+}
+
+.sort-select-wrapper select:focus {
+  outline: none;
+  border-color: #9b93ff;
+  box-shadow: 0 0 0 3px rgba(139, 131, 255, 0.12);
+}
+
+.sort-select-wrapper select option {
+  color: #e8eaf2;
+  background: #151b30;
+}
+
+@media (max-width: 500px) {
+  .sort-control {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sort-select-wrapper {
+    width: 100%;
+  }
+}
