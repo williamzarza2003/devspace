@@ -2,7 +2,6 @@
 import "./App.css";
 
 import Header from "./components/Header";
-import Welcome from "./components/Welcome";
 import InfoCard from "./components/InfoCard";
 import TechnologyForm from "./components/TechnologyForm";
 import EditTechnologyForm from "./components/EditTechnologyForm";
@@ -53,7 +52,10 @@ function App() {
       <main className="dashboard">
         <Header />
 
-        <Welcome />
+        <section className="hero">
+          <h1>DEVSPACE</h1>
+          <p>Organizá y seguí las tecnologías que estás aprendiendo.</p>
+        </section>
         <DashboardStats technologies={technologies} />
 
         {notification && (

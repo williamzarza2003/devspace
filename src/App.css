@@ -65,28 +65,21 @@ select:focus-visible {
   font-size: 13px;
 }
 
-/* BIENVENIDA */
+/* ENCABEZADO PRINCIPAL */
 
-.welcome {
+.hero {
   padding: 75px 0 55px;
   max-width: 720px;
 }
 
-.eyebrow {
-  color: #9b93ff;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
-}
-
-.welcome h1 {
+.hero h1 {
   font-size: clamp(34px, 6vw, 58px);
   line-height: 1.12;
   margin: 18px 0;
   letter-spacing: -2px;
 }
 
-.welcome > p:last-child {
+.hero > p {
   color: #a3abc0;
   line-height: 1.8;
   font-size: 16px;
@@ -371,7 +364,7 @@ footer {
     padding-top: 22px;
   }
 
-  .welcome {
+  .hero {
     padding: 55px 0 35px;
   }
 

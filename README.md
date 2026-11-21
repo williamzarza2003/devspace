@@ -53,7 +53,6 @@ La aplicación queda disponible en la URL que muestra Vite (por defecto `http://
 src/
 ├── components/        # Componentes de interfaz
 │   ├── Header.tsx
-│   ├── Welcome.tsx
 │   ├── DashboardStats.tsx
 │   ├── TechnologyForm.tsx
 │   ├── EditTechnologyForm.tsx
