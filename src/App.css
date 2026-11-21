@@ -201,8 +201,7 @@ select:focus-visible {
   gap: 18px;
 }
 
-.card,
-.counter-panel {
+.card {
   background: #141b30;
   border: 1px solid #28324c;
   border-radius: 14px;
@@ -243,81 +242,6 @@ select:focus-visible {
 }
 
 /* ELIMINAR TARJETAS */
-
-.delete-button {
-  margin-top: auto;
-  padding: 8px 13px;
-  color: #ff929e;
-  background: rgb(255 100 120 / 8%);
-  border: 1px solid rgb(255 100 120 / 25%);
-  border-radius: 7px;
-  font-size: 12px;
-  font-weight: 600;
-  transition:
-    background 0.2s,
-    border-color 0.2s;
-}
-
-.delete-button:hover {
-  background: rgb(255 100 120 / 17%);
-  border-color: #ff7185;
-}
-
-/* CONTADOR */
-
-.counter-panel {
-  margin-top: 25px;
-  text-align: center;
-  padding: 35px 20px;
-}
-
-.counter-panel h2 {
-  margin-top: 0;
-}
-
-.counter-panel p {
-  color: #a3abc0;
-}
-
-.number {
-  font-size: 64px;
-  font-weight: 800;
-  color: #9b93ff;
-  margin: 15px 0 25px;
-}
-
-.actions {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.actions button {
-  background: #8178f8;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 22px;
-  font-weight: 600;
-  transition:
-    background 0.2s,
-    transform 0.2s;
-}
-
-.actions button:hover {
-  background: #6b61e8;
-  transform: translateY(-2px);
-}
-
-.actions .secondary {
-  background: #252e46;
-  color: #e8eaf2;
-}
-
-.actions .secondary:hover {
-  background: #35415f;
-}
 
 /* PIE DE PAGINA */
 
