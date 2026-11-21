@@ -4,7 +4,6 @@ import "./App.css";
 import Header from "./components/Header";
 import Welcome from "./components/Welcome";
 import InfoCard from "./components/InfoCard";
-import Counter from "./components/Counter";
 import TechnologyForm from "./components/TechnologyForm";
 import EditTechnologyForm from "./components/EditTechnologyForm";
 import TechnologyFilters from "./components/TechnologyFilters";
@@ -175,9 +174,8 @@ function App() {
           )}
         </section>
 
-        <Counter />
 
-        <footer>Mi primer proyecto · React + TypeScript</footer>
+        <footer>DEVSPACE · Desarrollado por William Zarza</footer>
       </main>
 
       {pendingConfirmation && (
