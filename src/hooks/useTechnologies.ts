@@ -1,78 +1,38 @@
 import { useEffect, useState, type ChangeEvent } from "react";
+import { initialTechnologies } from "../data/initialTechnologies";
+import type {
+  NotificationData,
+  PendingConfirmation,
+  SortOrder,
+  Technology,
+} from "../types/technology";
+import { downloadJson } from "../utils/downloadJson";
+import {
+  ALL_CATEGORIES,
+  filterTechnologies,
+  loadStoredSortOrder,
+  loadStoredTechnologies,
+  parseImportedTechnologies,
+  sortTechnologies,
+  titleExists,
+} from "../utils/technologies";
 
-export type Technology = {
-  label: string;
-  title: string;
-  description: string;
-};
+// Se reexportan para no romper los imports existentes de los componentes.
+export type { NotificationData, SortOrder, Technology };
 
-export type NotificationData = {
-  message: string;
-  type: "success" | "error" | "info";
-};
-
-type PendingConfirmation = {
-  title: string;
-  message: string;
-  action: "delete" | "reset";
-  technologyTitle?: string;
-};
-
-type PendingImport = Technology[];
-
-const initialTechnologies: Technology[] = [
-  {
-    label: "FRAMEWORK",
-    title: "React",
-    description: "Interfaces interactivas",
-  },
-  {
-    label: "LENGUAJE",
-    title: "TypeScript",
-    description: "JavaScript con tipos",
-  },
-  {
-    label: "HERRAMIENTA",
-    title: "Vite",
-    description: "Desarrollo rápido",
-  },
-  {
-    label: "LENGUAJE",
-    title: "Python",
-    description: "Automatización y desarrollo",
-  },
-  {
-    label: "LENGUAJE",
-    title: "Java",
-    description: "Desarrollo de aplicaciones",
-  },
-  {
-    label: "LENGUAJE",
-    title: "C++",
-    description: "Programación de propósito general",
-  },
-];
+const TECHNOLOGIES_KEY = "devspace-technologies";
+const SORT_ORDER_KEY = "devspace-sort-order";
 
 export function useTechnologies() {
-  const [technologies, setTechnologies] = useState<Technology[]>(() => {
-    const savedTechnologies = localStorage.getItem("devspace-technologies");
-
-    if (savedTechnologies) {
-      try {
-        return JSON.parse(savedTechnologies) as Technology[];
-      } catch {
-        return initialTechnologies;
-      }
-    }
-
-    return initialTechnologies;
-  });
+  const [technologies, setTechnologies] = useState<Technology[]>(() =>
+    loadStoredTechnologies(localStorage.getItem(TECHNOLOGIES_KEY)),
+  );
 
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("TODAS");
-  const [sortOrder, setSortOrder] = useState(() => {
-    return localStorage.getItem("devspace-sort-order") || "default";
-  });
+  const [categoryFilter, setCategoryFilter] = useState(ALL_CATEGORIES);
+  const [sortOrder, setSortOrder] = useState<SortOrder>(() =>
+    loadStoredSortOrder(localStorage.getItem(SORT_ORDER_KEY)),
+  );
   const [notification, setNotification] = useState<NotificationData | null>(
     null,
   );
@@ -88,52 +48,28 @@ export function useTechnologies() {
   const [pendingConfirmation, setPendingConfirmation] =
     useState<PendingConfirmation | null>(null);
 
-  const [pendingImport, setPendingImport] = useState<PendingImport | null>(
+  const [pendingImport, setPendingImport] = useState<Technology[] | null>(
     null,
   );
 
   useEffect(() => {
-    localStorage.setItem("devspace-technologies", JSON.stringify(technologies));
+    localStorage.setItem(TECHNOLOGIES_KEY, JSON.stringify(technologies));
   }, [technologies]);
 
   useEffect(() => {
-    localStorage.setItem("devspace-sort-order", sortOrder);
+    localStorage.setItem(SORT_ORDER_KEY, sortOrder);
   }, [sortOrder]);
 
-  const filteredTechnologies = technologies.filter((technology) => {
-    const matchesSearch = technology.title
-      .toLowerCase()
-      .includes(search.toLowerCase().trim());
+  const filteredTechnologies = filterTechnologies(
+    technologies,
+    search,
+    categoryFilter,
+  );
 
-    const matchesCategory =
-      categoryFilter === "TODAS" || technology.label === categoryFilter;
-
-    return matchesSearch && matchesCategory;
-  });
-
-  const sortedTechnologies = [...filteredTechnologies].sort((a, b) => {
-    switch (sortOrder) {
-      case "az":
-        return a.title.localeCompare(b.title);
-
-      case "za":
-        return b.title.localeCompare(a.title);
-
-      case "category":
-        return a.label.localeCompare(b.label) || a.title.localeCompare(b.title);
-
-      default:
-        return 0;
-    }
-  });
+  const sortedTechnologies = sortTechnologies(filteredTechnologies, sortOrder);
 
   function handleAddTechnology(newTechnology: Technology) {
-    const alreadyExists = technologies.some(
-      (technology) =>
-        technology.title.toLowerCase() === newTechnology.title.toLowerCase(),
-    );
-
-    if (alreadyExists) {
+    if (titleExists(technologies, newTechnology.title)) {
       setNotification({
         message: "Esta tecnología ya está registrada.",
         type: "error",
@@ -182,13 +118,7 @@ export function useTechnologies() {
       return;
     }
 
-    const alreadyExists = technologies.some(
-      (technology) =>
-        technology.title.toLowerCase() === cleanTitle.toLowerCase() &&
-        technology.title !== originalEditingTitle,
-    );
-
-    if (alreadyExists) {
+    if (titleExists(technologies, cleanTitle, originalEditingTitle)) {
       setNotification({
         message: "Ya existe una tecnología con ese nombre.",
         type: "error",
@@ -270,23 +200,7 @@ export function useTechnologies() {
   }
 
   function handleExportTechnologies() {
-    const json = JSON.stringify(technologies, null, 2);
-
-    const blob = new Blob([json], {
-      type: "application/json",
-    });
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = "devspace-technologies.json";
-
-    document.body.appendChild(link);
-    link.click();
-
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    downloadJson(technologies, "devspace-technologies.json");
 
     setNotification({
       message: "Tecnologías exportadas correctamente.",
@@ -314,59 +228,7 @@ export function useTechnologies() {
 
     reader.onload = () => {
       try {
-        const importedData: unknown = JSON.parse(reader.result as string);
-
-        if (!Array.isArray(importedData) || importedData.length === 0) {
-          throw new Error("El archivo no contiene una lista válida.");
-        }
-
-        const allowedCategories = [
-          "LENGUAJE",
-          "FRAMEWORK",
-          "HERRAMIENTA",
-          "BASE DE DATOS",
-        ];
-
-        const validTechnologies = importedData.every((item: unknown) => {
-          if (typeof item !== "object" || item === null) {
-            return false;
-          }
-
-          const technology = item as Record<string, unknown>;
-
-          return (
-            typeof technology.label === "string" &&
-            allowedCategories.includes(technology.label) &&
-            typeof technology.title === "string" &&
-            technology.title.trim().length > 0 &&
-            typeof technology.description === "string" &&
-            technology.description.trim().length > 0
-          );
-        });
-
-        if (!validTechnologies) {
-          throw new Error(
-            "El archivo contiene tecnologías con datos inválidos.",
-          );
-        }
-
-        const normalizedTechnologies = importedData as Technology[];
-
-        const titles = normalizedTechnologies.map((technology) =>
-          technology.title.trim().toLowerCase(),
-        );
-
-        if (new Set(titles).size !== titles.length) {
-          throw new Error("El archivo contiene tecnologías duplicadas.");
-        }
-
-        setPendingImport(
-          normalizedTechnologies.map((technology) => ({
-            ...technology,
-            title: technology.title.trim(),
-            description: technology.description.trim(),
-          })),
-        );
+        setPendingImport(parseImportedTechnologies(reader.result as string));
 
         setNotification({
           message: "Archivo válido. Confirmá la importación para continuar.",

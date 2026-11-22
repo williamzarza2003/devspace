@@ -8,6 +8,14 @@ Panel personal para organizar y gestionar las tecnologías que uso y quiero apre
 
 DEVSPACE es un dashboard donde se registran lenguajes, frameworks, herramientas y bases de datos como tarjetas, con búsqueda, filtros, ordenamiento y estadísticas. Los datos se guardan en el navegador, por lo que la aplicación funciona sin servidor ni cuenta.
 
+## Capturas
+
+![Dashboard con resumen y distribución por categorías](docs/screenshots/dashboard.png)
+
+![Formulario para agregar tecnologías, búsqueda y ordenamiento](docs/screenshots/formulario.png)
+
+![Listado de tecnologías en tarjetas](docs/screenshots/tecnologias.png)
+
 ## Funcionalidades
 
 - Alta, edición y eliminación de tecnologías, con validación de campos y de duplicados (sin distinguir mayúsculas).
@@ -26,6 +34,8 @@ DEVSPACE es un dashboard donde se registran lenguajes, frameworks, herramientas 
 - [TypeScript](https://www.typescriptlang.org/) 6
 - [Vite](https://vite.dev/) 8
 - [ESLint](https://eslint.org/) 10 con `typescript-eslint`, `react-hooks` y `react-refresh`
+- [Vitest](https://vitest.dev/) para pruebas unitarias
+- [Prettier](https://prettier.io/) para formato de código
 
 ## Instalación
 
@@ -48,6 +58,10 @@ La aplicación queda disponible en la URL que muestra Vite (por defecto `http://
 | `npm run build`   | Verifica tipos (`tsc -b`) y genera el build en `dist`. |
 | `npm run lint`    | Ejecuta ESLint sobre el proyecto.                    |
 | `npm run preview` | Sirve localmente el build de producción.             |
+| `npm run test`    | Ejecuta las pruebas unitarias con Vitest.            |
+| `npm run test:watch` | Ejecuta las pruebas en modo observación.          |
+| `npm run format`  | Formatea el código con Prettier.                     |
+| `npm run format:check` | Verifica el formato sin modificar archivos.     |
 
 ## Estructura del proyecto
 
@@ -62,8 +76,16 @@ src/
 │   ├── InfoCard.tsx
 │   ├── ConfirmModal.tsx
 │   └── Notification.tsx
+├── data/
+│   └── initialTechnologies.ts  # Datos de ejemplo iniciales
 ├── hooks/
-│   └── useTechnologies.ts   # Estado y lógica de negocio
+│   └── useTechnologies.ts   # Estado de React y acciones
+├── types/
+│   └── technology.ts        # Tipos del dominio (Technology, SortOrder, ...)
+├── utils/
+│   ├── technologies.ts      # Lógica pura: filtrado, orden, validación
+│   ├── technologies.test.ts # Pruebas unitarias
+│   └── downloadJson.ts      # Exportación a archivo
 ├── App.tsx            # Composición del dashboard
 ├── App.css / index.css
 └── main.tsx
@@ -71,32 +93,27 @@ src/
 
 ## Decisiones técnicas
 
-- **Lógica en un custom hook.** `useTechnologies` concentra el estado, el filtrado, el ordenamiento, la persistencia y la importación/exportación; `App.tsx` solo compone la interfaz.
+- **Lógica en un custom hook.** `useTechnologies` concentra el estado y las acciones; `App.tsx` solo compone la interfaz.
+- **Lógica pura separada y probada.** El filtrado, el ordenamiento y la validación viven en `utils/` como funciones sin dependencias de React, cubiertas con pruebas unitarias.
 - **Sin backend.** `localStorage` simplifica el despliegue y permite uso offline, a costa de que los datos queden ligados al navegador.
 - **Validación defensiva al importar.** El JSON se trata como entrada no confiable: se valida forma, categorías y duplicados antes de ofrecer la importación.
 - **Confirmación en acciones destructivas.** Eliminar, restaurar e importar reemplazan datos, por lo que pasan por un modal.
-- **TypeScript estricto** para modelar el dominio (`Technology`, `NotificationData`) y reducir errores en tiempo de compilación.
+- **TypeScript estricto** para modelar el dominio (`Technology`, `NotificationData`, `SortOrder`) y reducir errores en tiempo de compilación. Los datos leídos de `localStorage` también se validan.
 
 ## Limitaciones
 
 - Los datos viven solo en el navegador: no se sincronizan entre dispositivos y se pierden si se borra el almacenamiento.
 - El título de la tecnología actúa como identificador, por lo que no puede repetirse.
-- No hay pruebas automatizadas.
+- Las pruebas cubren la lógica pura; todavía no hay pruebas de componentes.
 - No hay autenticación ni multiusuario.
 
 ## Próximos pasos
 
-- Agregar pruebas unitarias y de componentes.
+- Agregar pruebas de componentes con Testing Library.
 - Sincronización con un backend o servicio en la nube.
 - Identificadores únicos en lugar de usar el título como clave.
 - Mejoras de accesibilidad (gestión de foco en modales, anuncios de notificaciones).
-- Despliegue público y CI con lint y build.
-
-## Capturas
-
-> _Próximamente: capturas de pantalla del dashboard._
-
-<!-- ![Dashboard](docs/dashboard.png) -->
+- CI con GitHub Actions (lint, pruebas y build).
 
 ## Autor
 

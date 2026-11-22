@@ -11,6 +11,7 @@ import ConfirmModal from "./components/ConfirmModal";
 import DashboardStats from "./components/DashboardStats";
 
 import { useTechnologies } from "./hooks/useTechnologies";
+import { isSortOrder } from "./types/technology";
 
 function App() {
   const {
@@ -122,7 +123,11 @@ function App() {
             <select
               id="technology-sort"
               value={sortOrder}
-              onChange={(event) => setSortOrder(event.target.value)}
+              onChange={(event) => {
+                if (isSortOrder(event.target.value)) {
+                  setSortOrder(event.target.value);
+                }
+              }}
             >
               <option value="default">Orden original</option>
               <option value="az">Nombre: A → Z</option>
